@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <div class="wrap">
+        <div class="header">
+            <h1 class="welcome" >Welcome {{request.session.user_name}}!</h1>
+            <a href="/" style="margin-left: 20px;">Logout</a>
+        </div>
+        <div class="main_content">
+            <div class="form-box">
+                <h2 class="quotes" >Quotes</h2>
+                {% for message in all_messages %}
+                <div style="border: 5px solid black; margin-bottom: 10px;">
+                <p>{{ message.content }}</p>
+                <p>Posted By: <a href="/user/{{message.poster.id}}">{{message.poster.first_name}} {{message.poster.last_name}}</a></p>
+                <a href="/like/{{message.id}}" style="margin-left: 150px;">Like Post</a>
+                <p>{{ message.user_likes.count }}</p>
+                {% if message.poster.id == request.session.user_id %}
+                <a class="del" href="/delete/{{message.id}}">Delete</a>
+                {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class='form-box'>
+                <form action="/create_message" method=POST>
+                    {% csrf_token %}
+                    {% if messages %}
+                <div id='errors'>
+                    {% for message in messages %}
+                        <p>- {{message}} -</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                    <h2 class="add" style="margin-left: 100px;">Add a Quote!:</h2>
+                    <h3 class="author">Author</h3>
+                    <input type="text">
+                    <h3>Quote</h3>
+                    <textarea name="contents" cols="50" rows="10"></textarea>
+                    <input type="submit" class="sub" value="Post" style="width: 50px;">
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
